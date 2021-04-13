@@ -1,0 +1,17 @@
+# Prerequisits:
+#
+# adduser player
+# adduser player video
+#
+[Unit]
+Description=WebGUI for omxplayer
+
+[Service]
+Type=simple
+User=player
+ExecStart=/usr/bin/php -S 0.0.0.0:4321 -t /opt/omxwebgui
+
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
