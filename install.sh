@@ -5,12 +5,12 @@ echo "==========================================="
 echo "Welcome to the guided OMXWEBGUI installation script"
 echo "The script requires 'sudo' at one point, to install php5-cli"
 echo "Anyway, you can install all manually by following the steps on"
-echo "https://github.com/brainfoolong/omxwebgui-v2"
+echo "https://github.com/beckerr-rzht/omxwebgui-v2"
 echo "It will install the latest stable release for you"
 echo "If you want the latest master branch, you have do that manually"
 echo "Are you want to continue? [y/n]"
 
-read p
+read p || exit $?
 echo ""
 
 if [ "$p" != "y" ] && [ "$p" != "Y" ] ; then
@@ -26,7 +26,7 @@ echo "No separate webserver required and recommended"
 echo "Maybe you will some errors because of non existing packages, ignore it"
 echo "Are you want to install php-cli now (sudo)? [y/n]"
 
-read p
+read p || exit $?
 echo ""
 
 if [ "$p" = "y" ] || [ "$p" = "Y" ] ; then
@@ -34,6 +34,7 @@ if [ "$p" = "y" ] || [ "$p" = "Y" ] ; then
     sudo apt-get install -qq -y php-mbstring
     sudo apt-get install -qq -y php5-cli
     sudo apt-get install -qq -y php5-mbstring
+    sudo apt-get install -qq -y git
 fi
 
 
@@ -43,13 +44,10 @@ echo "OMXWEBGUI runs as a php-cli server which requires a port to be defined"
 echo "Default port is 4321"
 echo "Leave it empty if you stick with the default or change it to a number you want"
 
-read p
+read p || exit $?
 echo ""
 
-port=4321
-if [ "$p" != "" ] ; then
-    port=$p
-fi
+port=${p:-4321}
 
 echo ""
 echo "==========================================="
@@ -58,22 +56,16 @@ echo "Choose directory path, default: ~/omxwebgui"
 echo "Leave it empty if you stick with the default"
 echo "Given directory should be empty or non existing"
 
-read p
+read p || exit $?
 echo ""
 
-path=~/omxwebgui
-if [ "$p" != "" ] ; then
-    path=$p
-fi
+path=${p:-~/omxwebgui}
 
-if [ ! -d "$path" ] ; then
-    mkdir $path
-fi
+[ -d "$path"     ] || mkdir -p "$path"
+[ -d "$path/tmp" ] || mkdir "$path/tmp"
 
-mkdir "$path/tmp"
-
-cd $path
-wget https://raw.githubusercontent.com/brainfoolong/omxwebgui-v2/master/updater.php
+cd "$path" || exit $?
+git clone https://github.com/beckerr-rzht/omxwebgui-v2.git "$path"
 php -f updater.php
 chmod +x *.sh
 
@@ -83,22 +75,23 @@ echo "Enable autostart for the OMXWEBGUI server"
 echo "This will add a new entry to crontab"
 echo "Are you want to enable autostart now? [y/n]"
 
-read p
+read p || exit $?
 echo ""
 
 if [ "$p" = "y" ] || [ "$p" = "Y" ] ; then
-    (crontab -l 2>/dev/null; echo "@reboot php -S 0.0.0.0:$port -t $path > /dev/null 2>&1 &") | crontab -
-fi
+	sed "s,/opt/omxwebgui,$path," contrib/omxwebgui.service >/etc/systemd/system/mxwebgui.service
+	systemctl enable omxwebgui
 
-echo ""
-echo "==========================================="
-echo "Start OMXWEBGUI server now? [y/n]"
+	echo ""
+	echo "==========================================="
+	echo "Start OMXWEBGUI server now? [y/n]"
 
-read p
-echo ""
+	read p || exit $?
+	echo ""
 
-if [ "$p" = "y" ] || [ "$p" = "Y" ] ; then
-    `php -S 0.0.0.0:$port -t $path > /dev/null 2>&1 &`
+	if [ "$p" = "y" ] || [ "$p" = "Y" ] ; then
+		systemctl start omxwebgui
+	fi
 fi
 
 echo ""
