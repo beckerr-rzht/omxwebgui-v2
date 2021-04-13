@@ -38,7 +38,7 @@ namespace {
     {
         $lang = Data::getKey("settings", "language");
         if (!$lang) {
-            $lang = "en";
+            $lang = "de";
         }
 
         $value = null;

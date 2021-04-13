@@ -57,12 +57,12 @@ abstract class View
                 echo '<script type="text/javascript" src="' . $url . '"></script>';
             }
             ?>
-            <title>Omx Web Gui by BrainFooLong</title>
+            <title>Omx Web Gui</title>
             <script type="text/javascript">
               owg.translations = <?=json_encode(Translation::$values) . ";"?>
                 owg.language = '<?=Data::getKey("settings", "language")?>'
               if (owg.language === '') {
-                owg.language = 'en'
+                owg.language = 'de'
               }
               owg.rootUrl = '<?=View::$rootUrl?>'
               owg.folders = <?=json_encode(Data::get("folders")) . ";"?>
@@ -94,11 +94,11 @@ abstract class View
                         <a href="<?= View::link("settings") ?>"><?= t("settings") ?></a>
                     </li>
                     <li>
-                        <a href="https://github.com/brainfoolong/omxwebgui-v2"
+                        <a href="https://github.com/beckerr-rzht/omxwebgui-v2"
                            target="_blank">Github</a>
                     </li>
                     <li>
-                        <a href="https://github.com/brainfoolong/omxwebgui-v2/issues"
+                        <a href="https://github.com/beckerr-rzht/omxwebgui-v2/issues"
                            target="_blank">Issues</a>
                     </li>
                 </ul>
@@ -110,10 +110,9 @@ abstract class View
                             <div class="spinner-container"></div>
                             <div class="page-content">
                                 <span class="top-logo">
-                                     <a href="https://github.com/brainfoolong/omxwebgui-v2"
+                                     <a href="https://github.com/beckerr-rzht/omxwebgui-v2"
                                         target="_blank" class="github">
                                         <strong>OMXWEBGUI v<?= Core::$version ?></strong>
-                                        <small>by BrainFooLong</small>
                                     </a>
                                     <a href="<?= View::link("settings") ?>" class="update hidden">
                                         <small>Update is ready</small>
